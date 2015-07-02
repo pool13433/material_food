@@ -17,51 +17,81 @@ switch ($_GET['event']) {
             $lname = $_POST['lname'];
             $username = $_POST['username'];
             $password = $_POST['password'];
-            $idcard = $_POST['idcard'];
-            $mobile = $_POST['mobile'];
+            $card_id = $_POST['card_id'];
+            $nation_id = $_POST['nation'];
+            $tel = $_POST['tel'];
+            $sex = $_POST['sex'];
+            $age = $_POST['age'];
             $email = $_POST['email'];
             $address = $_POST['address'];
-            $status = $_POST['status'];
+            $type = $_POST['type'];
+            $picture = $_POST['picture'];
             $params = array(
                 ':code' => $code,
                 ':username' => $username,
                 ':password' => $password,
                 ':fname' => $fname,
                 ':lname' => $lname,
-                ':idcard' => $idcard,
-                ':mobile' => $mobile,
+                ':card_id' => $card_id,
+                ':nation_id' => $nation_id,
+                ':tel' => $tel,
+                ':sex' => $sex,
+                ':age' => $age,
                 ':email' => $email,
                 ':address' => $address,
-                ':actor' => 1, // actor
-                ':status' => $status
+                ':type' => $type
             );
 
             if (empty($id)) {// insert เพิ่มข้อมูลใหม่
                 $sql = ' INSERT INTO `user`(';
-                $sql .= ' `u_code`, `u_username`, `u_password`,';
-                $sql .= ' `u_fname`, `u_lname`, `u_idcard`, `u_mobile`,';
-                $sql .= ' `u_email`, `u_address`, `u_modifieddate`,';
-                $sql .= ' `u_modifiedby`, `u_status`) VALUES (';
+                $sql .= ' `code`, `username`, `password`,';
+                $sql .= ' `fname`, `lname`, `card_id`, nation_id,`tel`,';
+                $sql .= ' sex,age,';
+                $sql .= ' `email`, `address`, `modifieddate`,';
+                $sql .= '  `type`,picture) VALUES (';
                 $sql .= ' :code,:fname,:lname,';
-                $sql .= ' :username,:password,:idcard,:mobile,';
+                $sql .= ' :username,:password,:card_id,:nation_id,:tel,';
                 $sql .= ' :email,:address,NOW(),';
-                $sql .= ' :actor,:status)';
+                $sql .= ' :type,:picture)';
             } else { // update แก้ไขข้อมูลใหม่
                 $sql = ' UPDATE `user` SET ';
-                $sql .= ' `u_code`=:code,';
-                $sql .= ' `u_username`=:username,`u_password`=:password,';
-                $sql .= ' `u_fname`=:fname,`u_lname`=:lname,';
-                $sql .= ' `u_idcard`=:idcard,`u_mobile`=:mobile,';
-                $sql .= ' `u_email`=:email,`u_address`=:address,';
-                $sql .= ' `u_modifieddate`=NOW(),`u_modifiedby`=:actor,';
-                $sql .= ' `u_status`=:status';
-                $sql .= ' WHERE `u_id`=:id';
+                $sql .= ' `code`=:code,';
+                $sql .= ' `username`=:username,`password`=:password,';
+                $sql .= ' `fname`=:fname,`lname`=:lname,';
+                $sql .= ' `card_id`=:card_id,nation_id=:nation_id,`tel`=:tel,';
+                $sql .= ' sex=:sex,age=:age,';
+                $sql .= ' `email`=:email,`address`=:address,';
+                $sql .= ' `modifieddate`=NOW(),';
+                $sql .= ' `type`=:type,';
+                $sql .= ' picture =:picture';
+                $sql .= ' WHERE `user_id`=:id';
                 $params['id'] = $id;
             }
+
+            /*
+             * Upload File
+             */
+            $picture_user_name = '';
+            if (!isset($picture) || !empty($_FILES['file']['name'])) {
+                $tempFile = $_FILES['file']['tmp_name'];
+                // using DIRECTORY_SEPARATOR constant is a good practice, it makes your code portable.
+                $targetPath = dirname(__FILE__) . DIRECTORY_SEPARATOR . PATH_UPLOAD . DIRECTORY_SEPARATOR;
+                // Adding timestamp with image's name so that files with same name can be uploaded easily.
+                $picture_user_name = time() . '-' . $_FILES['file']['name'];
+                $picture_new_name = $targetPath . $picture_user_name;
+                move_uploaded_file($tempFile, $picture_new_name);
+            } else {
+                $picture_user_name = $picture;
+            }
+            /*
+             * End Upload File
+             */
+            $params['picture'] = $picture_user_name;
+
             $stmt = $pdo->conn->prepare($sql);
             $exe = $stmt->execute($params);
             if ($exe) {
-                echo returnJson(true, 'บันทึกสำเร็จ', 'บันทึกสำเร็จ', './index.php?page=list-user&user_status=' . $status);
+                echo returnJson(true, 'บันทึกสำเร็จ', 'บันทึกสำเร็จ', './index.php?page=list-user&user_type=' . $type);
             } else {
                 echo returnJson(false, 'เกิดข้อผิดพลาด', 'บันทึก ไม่สำเร็จ [ ' . $sql . ' ]', '');
             }
@@ -71,7 +101,7 @@ switch ($_GET['event']) {
         // delete ลบข้อมูล
         try {
             $pdo->conn = $pdo->open();
-            $sql = 'DELETE FROM user WHERE u_id =:id';
+            $sql = 'DELETE FROM user WHERE user_id =:id';
             $stmt = $pdo->conn->prepare($sql);
             $exe = $stmt->execute(array(
                 ':id' => $_POST['id'],
@@ -98,7 +128,7 @@ switch ($_GET['event']) {
         try {
             $pdo = new DbConnection();
             $pdo->conn = $pdo->open();
-            $stmt = $pdo->conn->prepare('SELECT * FROM user WHERE u_username =:username AND u_password =:password');
+            $stmt = $pdo->conn->prepare('SELECT * FROM user WHERE username =:username AND password =:password');
             $stmt->execute(
                     array(
                         ':username' => $_POST['username'],
@@ -111,8 +141,8 @@ switch ($_GET['event']) {
             } else {
                 $url = './index.php?page=' . BACKEND_HOME;
                 $_SESSION['person'] = $result;
-                //var_dump($result->status);
-                if ($result->u_status == EMPLOYEE) {
+                //var_dump($result->type);
+                if ($result->type == EMPLOYEE) {
                     $url = '../backend/index.php?page=' . BACKEND_HOME;
                 } else {
                     $url = './index.php?page=van_search';
@@ -129,7 +159,9 @@ switch ($_GET['event']) {
         // register สมัครสมาชิก
 
         break;
+
     default:
         break;
 }
 
+    

@@ -31,6 +31,16 @@ var DATEPICKER_LOCAL = {
     monthNames: ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฏาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"],
     firstDay: 1
 };
+var DATETIMEPICKER_LOCAL = {
+    viewMode: 'years',
+    format: 'DD/MM/YYYY',
+    defaultDate: new Date(),//moment().format("DD/MM/YYYY"),//"11/1/2013",
+//    disabledDates: [
+//        moment("12/25/2013"),
+//        new Date(2013, 11 - 1, 21),
+//        "11/22/2013 00:53"
+//    ]
+}
 
 $(document).ready(function () {
     // http://wenzhixin.net.cn/p/bootstrap-table/docs/index.html
@@ -40,6 +50,10 @@ $(document).ready(function () {
     $('.dataTable').dataTable({
         "dom": "<'row'<'col-xs-6'l><'col-xs-6'f>r><'row'<'col-xs-12'P>>t<'row'<'col-xs-6'i><'col-xs-6'p>>",
         "language": DATATABLE_LANGUAGE,
+        columnDefs: [
+            {width: '5%', targets: 0},
+        ],
+        //"autoWidth": false
     });
     $('.dataTables_filter input').addClass('form-control').attr('placeholder', 'ค้นหาข้อมูล...');
     $('.dataTables_length select').addClass('form-control');
@@ -47,7 +61,78 @@ $(document).ready(function () {
     /*
      * DataTable Plugin
      */
+
+
+    /*
+     * Style Upload File
+     */
+    $(':file').filestyle({
+        buttonText: ' เลือกไฟล์',
+        buttonName: 'btn-primary'
+    });
+
+    /*
+     * datetimepicker
+     * 
+     * http://eonasdan.github.io/bootstrap-datetimepicker/#no-icon-input-field-only
+     */
+
+
+    var datetimepicker_begin = $('#datetimepicker_begin').datetimepicker(DATETIMEPICKER_LOCAL);
+    var datetimepicker_end = $('#datetimepicker_end').datetimepicker(DATETIMEPICKER_LOCAL);
+    datetimepicker_begin.on("dp.change", function (e) {
+        datetimepicker_end.data("DateTimePicker").minDate(e.date);
+    });
+    datetimepicker_end.on("dp.change", function (e) {
+        datetimepicker_begin.data("DateTimePicker").maxDate(e.date);
+    });
 });
+
+/*
+ * Dropzone Jquery
+ */
+
+/*Dropzone.options.myDropzone = { // The camelized version of the ID of the form element
+ 
+ // The configuration we've talked about above
+ autoProcessQueue: false,
+ uploadMultiple: true,
+ parallelUploads: 100,
+ maxFiles: 100,
+ // The setting up of the dropzone
+ init: function () {
+ var myDropzone = this;
+ 
+ // First change the button to actually tell Dropzone to process the queue.
+ this.element.querySelector("button[type=submit]").addEventListener("click", function (e) {
+ // Make sure that the form isn't actually being sent.
+ e.preventDefault();
+ e.stopPropagation();
+ myDropzone.processQueue();
+ });
+ 
+ // Listen to the sendingmultiple event. In this case, it's the sendingmultiple event instead
+ // of the sending event because uploadMultiple is set to true.
+ this.on("sendingmultiple", function () {
+ // Gets triggered when the form is actually being sent.
+ // Hide the success button or the complete form.
+ });
+ this.on("successmultiple", function (files, response) {
+ // Gets triggered when the files have successfully been sent.
+ // Redirect user or notify of success.
+ });
+ this.on("errormultiple", function (files, response) {
+ // Gets triggered when there was an error sending the files.
+ // Maybe show form again, and notify user of error
+ });
+ }
+ 
+ }*/
+/*
+ * Dropzone Jquery
+ */
+
+
 
 function submitPostForm(formid, url) {
     $.ajax({
@@ -74,6 +159,26 @@ function submitPostForm(formid, url) {
         console.log('requrest http success');
     }).fail(function (jqXHR, textStatus) {
         alert("We could not subscribe you please try again or contact us if the problem persists (" + textStatus + ").");
+    });
+}
+function submitMutipartPostForm(objForm, url) {
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: new FormData(objForm),
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+        success: function (data, textStatus, xhr) {
+            alert(data.message);
+            if (data.status) {
+                redirectDelay(data.url);
+            }
+        },
+        error: function (xhr, status, error) {
+            //notifyShowing('top', 'error', '\n xhr ::==' + xhr + '\n status ::==' + status + '\n error ::==' + error);
+            alert('top', 'error', '\n xhr ::==' + xhr + '\n status ::==' + status + '\n error ::==' + error);
+        },
     });
 }
 function redirectDelay(url, timer) {
@@ -177,7 +282,7 @@ function news_approve(id, status, url) {
         }, function (data) {
             if (data.status == 'success') {
                 //reloadDelay(1);
-                redirectDelay('index.php?page=news_approve&status='+status+'&search-word=', 1);
+                redirectDelay('index.php?page=news_approve&status=' + status + '&search-word=', 1);
             }
         }, 'json');
         return false;
@@ -263,7 +368,34 @@ function OpenWindow(params, width, height, name) {
     win.focus();
     return false;
 }
+function arrayObjectToJsonString(arrayObject) {
+    var jsonstring = JSON.stringify(arrayObject);
+    return jsonstring;
+}
+function jsonStringToJsonObject(myJSONtext) {
+    var myObject = eval('(' + myJSONtext + ')');
+    return myObject;
+}
+function parseNegativeIntToPositiveInt(value) { // แปลง เต็มลบ ไป เต็มบวก
+    return value.toString().replace("-", "");
+}
+function formToJsonString(formId) {
+    var data = {};
+    $('#' + formId).serializeArray().map(function (x) {
+        data[x.name] = x.value;
+    });
+    return data;
+}
+function getFormData($form) {
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
 
+    $.map(unindexed_array, function (n, i) {
+        indexed_array[n['name']] = n['value'];
+    });
+
+    return JSON.stringify(indexed_array);
+}
 
 // #################### function check file ###########
 function CheckExtension(file) {

@@ -1,3 +1,6 @@
+<?php 
+session_start();
+?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -7,7 +10,7 @@
         <?php require '../resources/includeCssJs.php'; ?>
     </head>
     <body>
-        <div style="margin: 10px 10px 10px 10px">
+        <div style="margin: 50px 10px 10px 10px">
             <?php
             require '../eventDb/valiableDefine.php';
             if (!empty($_GET)) { // ตรวจสอบค่าตัวแปร GET ไม่ว่างก็ทำ ข้างในนี้

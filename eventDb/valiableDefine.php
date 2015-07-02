@@ -8,13 +8,9 @@ define('BACKEND_HOME', 'dashboard');
 
 
 // ################### upload config #############
-define('PATH_UPLOAD', '/images/uploads/');
-define('PATH_UNZIP', '/images/unzip/');
-define('EX_FILEZIP_NAME', '99999-20141231-01.zip');
-define('EX_FILEZIP_LENGTH', 21);
-define('ACCEPTED_FILES', 'application/zip');
-define('MAX_FILE_SIZE', 20);
-define('MUTI_UPLOAD', 1);  // 1 = Signgle, > 1 = Muti
+define('PATH_UPLOAD', '../uploads/picture_user/');
+define('MAX_PICTURE_SIZE', 400);
+
 // ################### upload config #############
 
 function returnJson($status, $title, $message, $url) {
@@ -46,12 +42,36 @@ function listUserPrefixStatus() {
         3 => '',
     );
 }
+
 function listUserStatus() {
     return array(
         1 => 'EMPLOYEE',
         2 => 'OWNER',
         3 => '',
     );
+}
+
+function listUserSex() {
+    return array(
+        'M' => 'ชาย',
+        'F' => 'หญิง'
+    );
+}
+
+function listMaterialStatus() {
+    return array(
+        '0' => 'ปกติ',
+        '1' => 'หมด',
+        '2' => 'หมดอายุ'
+    );
+}
+
+function listUserAge($minAge = 10, $maxAge = 100) {
+    $ages = array();
+    for ($i = $minAge; $i < $maxAge; $i++) {
+        $ages[$i] = $i;
+    }
+    return $ages;
 }
 
 function getDataList($params, $list) {

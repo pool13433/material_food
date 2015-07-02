@@ -50,7 +50,7 @@ class DbConnection {
         $pdo->conn = $pdo->open();
         //SELECT LPAD(CONVERT(RIGHT(`code`, 4),UNSIGNED INTEGER),4,0) as newnumber FROM `person`         
         $sql = ' SELECT RIGHT((LEFT(CURDATE(),4)+543),2) as year_ad,'; // 58
-        $sql .= ' CASE u_status ';
+        $sql .= ' CASE status ';
         $sql .= ' WHEN 1 THEN \'EMP\'';
         $sql .= ' WHEN 2 THEN \'ONW\'';
         $sql .= ' WHEN 3 THEN \'CUS\'';
@@ -58,11 +58,11 @@ class DbConnection {
         $sql .= ' WHEN 0 THEN \'GEN\'';
         $sql .= ' ELSE \'ERR\'';
         $sql .= ' END prefix_status,';
-        $sql .= ' LEFT(`u_code`,3) as prefix,'; // DRI,EMP,CUS,ONW
-        $sql .= ' LPAD(CONVERT(RIGHT(`u_code`, 4),UNSIGNED INTEGER)+1,4,0) as new_runnumber,';
-        $sql .= ' RIGHT(`u_code`, 4) as runnumber';
+        $sql .= ' LEFT(`code`,3) as prefix,'; // DRI,EMP,CUS,ONW
+        $sql .= ' LPAD(CONVERT(RIGHT(`code`, 4),UNSIGNED INTEGER)+1,4,0) as new_runnumber,';
+        $sql .= ' RIGHT(`code`, 4) as runnumber';
         $sql .= ' FROM user WHERE status =:status';
-        $sql .= ' ORDER BY RIGHT(`u_code`, 4) DESC LIMIT 0,1 ';
+        $sql .= ' ORDER BY RIGHT(`code`, 4) DESC LIMIT 0,1 ';
         //echo 'sql ::=='.$sql;
 
         $stmt = $pdo->conn->prepare($sql);

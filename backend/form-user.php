@@ -8,62 +8,81 @@ $fname = '';
 $lname = '';
 $username = '';
 $password = '';
-$idcard = '';
-$mobile = '';
+$card_id = '';
+$nation_id = '';
+$tel = '';
+$sex = '';
+$age = 0;
 $email = '';
 $address = '';
 $updatedate = '';
-$updateby = '';
-$status = (empty($_GET['user_status']) ? '' : $_GET['user_status']);
-$code = $pdo->createUserSerialCode($status);
+$picture = '';
+$type = (empty($_GET['user_type']) ? '' : $_GET['user_type']);
+$code = $pdo->createUserSerialCode($type);
 if (empty($code)) {
-    $code = getDataList($status, listUserPrefixStatus()) . '00001';
+    $code = getDataList($type, listUserPrefixStatus()) . '00001';
 }
-
+$validatePicture = 'required data-bv-notempty-message="กรุณาเลือกภาพส่วนตัว"';
 /*
  * ตรวจสอบ id เพื่อดูว่ากำลังแก้ไขหรือสร้างใหม่ด้วย ฟังชั่น empty() = ว่าง , !empty = ไม่ว่าง
  */
 if (!empty($_GET['id'])) {
-    $stmt = $pdo->conn->prepare('SELECT * FROM user WHERE u_id =:id');
+    $stmt = $pdo->conn->prepare('SELECT * FROM user WHERE user_id =:id');
     $stmt->execute(array(':id' => $_GET['id']));
     $result = $stmt->fetch(PDO::FETCH_OBJ);
 
     /*
      * เซตค่าใส่ตัวแปร
      */
-    $id = $result->u_id;
-    $code = $result->u_code;
-    $fname = $result->u_fname;
-    $lname = $result->u_lname;
-    $username = $result->u_username;
-    $password = $result->u_password;
-    $idcard = $result->u_idcard;
-    $mobile = $result->u_mobile;
-    $email = $result->u_email;
-    $address = $result->u_address;
-    $updatedate = $result->u_modifieddate;
-    $updateby = $result->u_modifiedby;
-    $status = $result->u_status;
+    $id = $result->user_id;
+    $code = $result->code;
+    $fname = $result->fname;
+    $lname = $result->lname;
+    $username = $result->username;
+    $password = $result->password;
+    $card_id = $result->card_id;
+    $nation_id = $result->nation_id;
+    $sex = $result->sex;
+    $age = $result->age;
+    $tel = $result->tel;
+    $email = $result->email;
+    $address = $result->address;
+    $updatedate = $result->modifieddate;
+    $type = $result->type;
+    $picture = $result->picture;
+    $validatePicture = '';
 }
 ?>
-
-<form class="form-horizontal" id="form_user"
+<form class="form-horizontal dropzone" id="form_user"
       data-bv-message="This value is not valid"
       data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
       data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
-      data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+      data-bv-feedbackicons-validating="glyphicon glyphicon-refresh" enctype="multipart/form-data">
     <section class="panel">
         <header class="panel-heading clearfix">        
             <h4 class="panel-title pull-left" style="padding-top: 7.5px;">
                 <i class="glyphicon glyphicon-user"></i><b>ฟอร์มผู้ใช้งาน</b>
             </h4>
             <div class="btn-group pull-right">
-                <a href="index.php?user_status=<?= $status ?>&page=list-user" class="btn btn-primary">
+                <a href="index.php?user_type=<?= $type ?>&page=list-user" class="btn btn-primary">
                     <i class="glyphicon glyphicon-arrow-left"></i> ย้อนกลับ
                 </a>
             </div>
         </header>
         <div class="panel-body">
+            <section class="row">
+                <div class="form-group">
+                    <div class="col-md-8 col-md-offset-0">                        
+                        <label for="code" class="col-sm-2 control-label">รูปส่วนตัว</label>
+                        <div class="col-sm-6">
+                            <img class="img-rounded" style="max-height: <?= MAX_PICTURE_SIZE ?>px;max-width: <?= MAX_PICTURE_SIZE ?>px;" src="<?= PATH_UPLOAD . $picture ?>"/>
+                        </div>
+                        <div class="col-md-4 col-sm-offset-0"> 
+                            <input type="file" name="file" <?= $validatePicture ?>/>                      
+                        </div>  
+                    </div>    
+                </div>
+            </section>
             <section class="row">
                 <div class="form-group">
                     <div class="col-md-6">
@@ -75,15 +94,16 @@ if (!empty($_GET['id'])) {
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <label for="idcard" class="col-sm-4 control-label">รหัสบัตรประชาชน</label>
+                        <label for="card_id" class="col-sm-4 control-label">รหัสบัตรประชาชน</label>
                         <div class="col-sm-4">
-                            <input type="text" class="form-control" name="idcard" placeholder="รหัสบัตรประชาชน" 
-                                   required data-bv-notempty-message="กรุณากรอกรหัสบัตรประชาชน" 
-                                   value="<?= $idcard; ?>"/>
+                            <input type="text" class="form-control" name="card_id" placeholder="รหัสบัตรประชาชน" 
+                                   required data-bv-notempty-message="กรุณากรอกรหัสบัตรประชาชน" maxlength="13"
+                                   value="<?= $card_id; ?>"/>
                         </div>
                     </div>
                 </div>
             </section>
+            <hr/>
             <section class="row">
                 <div class="form-group">
                     <div class="col-md-6">
@@ -119,6 +139,7 @@ if (!empty($_GET['id'])) {
                     </div>
                 </div>
             </section>
+            <hr/>
             <section class="row">
                 <div class="form-group">
                     <div class="col-md-6">
@@ -141,15 +162,67 @@ if (!empty($_GET['id'])) {
             </section>
             <section class="row">
                 <div class="form-group">
-                    <div class="col-md-12">
-                        <label for="fname" class="col-sm-2 control-label">ที่อยู่</label>
+                    <div class="col-md-6">
+                        <label for="fname" class="col-sm-4 control-label">ที่อยู่</label>
                         <div class="col-sm-8">                        
                             <textarea class="form-control" name="address" placeholder="ที่อยู่"
-                                required data-bv-notempty-message="กรุณากรอกชื่อ" 
-                                ><?=$address?></textarea>
+                                      required data-bv-notempty-message="กรุณากรอกชื่อ" rows="10"
+                                      ><?= $address ?></textarea>
                         </div>
                     </div>
                     <div class="col-md-6">
+                        <label for="fname" class="col-sm-4 control-label">สัญชาติ</label>
+                        <div class="col-sm-4">                        
+                            <?php
+                            $sql = 'SELECT *  FROM nation ORDER BY nat_name ASC';
+                            $stmt = $pdo->conn->prepare($sql);
+                            $stmt->execute();
+                            $natios = $stmt->fetchAll(PDO::FETCH_OBJ);
+                            ?>
+                            <select class="form-control" name="nation" required data-bv-notempty-message="กรุณากรอกสัญชาติ">
+                                <?php foreach ($natios as $index => $data) { ?>
+                                    <?php if ($nation_id == $data->nat_id) { ?>
+                                        <option value="<?= $data->nat_id ?>" selected><?= $data->nat_name ?></option>
+                                    <?php } else { ?>
+                                        <option value="<?= $data->nat_id ?>"><?= $data->nat_name ?></option>
+                                    <?php } ?>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="row">
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <label for="sex" class="col-sm-4 control-label">เพศ</label>
+                        <div class="col-sm-4">
+                            <?php $sexs = listUserSex(); ?>
+                            <select class="form-control" name="sex" required data-bv-notempty-message="กรุณาเลือกเพศ">                                
+                                <?php foreach ($sexs as $key => $data) { ?>
+                                    <?php if ($sex == $key) { ?>
+                                        <option value="<?= $key ?>" selected><?= $data ?></option>
+                                    <?php } else { ?>
+                                        <option value="<?= $key ?>"><?= $data ?></option>
+                                    <?php } ?>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="age" class="col-sm-4 control-label">อายุ</label>
+                        <div class="col-sm-3">
+                            <?php $ages = listUserAge(20, 70); ?>
+                            <select class="form-control" name="age" required data-bv-notempty-message="กรุณาเลือกอายุ">                                
+                                <?php foreach ($ages as $key => $data) { ?>
+                                    <?php if ($age == $key) { ?>
+                                        <option value="<?= $key ?>" selected><?= $data ?></option>
+                                    <?php } else { ?>
+                                        <option value="<?= $key ?>"><?= $data ?></option>
+                                    <?php } ?>
+                                <?php } ?>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -166,20 +239,21 @@ if (!empty($_GET['id'])) {
                     <div class="col-md-6">
                         <label for="lname" class="col-sm-4 control-label">เบอร์โทรศัพท์</label>
                         <div class="col-sm-3">
-                            <input type="text" class="form-control" name="mobile" placeholder="เบอร์โทรศัพท์" 
-                                   required data-bv-notempty-message="กรุณากรอกเบอร์โทรศัพท์" 
-                                   value="<?= $mobile; ?>"/>
+                            <input type="text" class="form-control" name="tel" placeholder="เบอร์โทรศัพท์" 
+                                   required data-bv-notempty-message="กรุณากรอกเบอร์โทรศัพท์" maxlength="10"
+                                   value="<?= $tel; ?>"/>
                         </div>
                     </div>
                 </div>
             </section>
         </div>
         <div class="panel-footer">
-            
-        <!-- hidden input-->
-        <input type="hidden" name="id" value="<?=$id?>"/>
-        <input type="hidden" name="status" value="<?=$status?>"/>
-            
+
+            <!-- hidden input-->
+            <input type="hidden" name="id" value="<?= $id ?>"/>
+            <input type="hidden" name="type" value="<?= $type ?>"/>
+            <input type="hidden" name="picture" value="<?= $picture ?>"/>
+
             <div class="row">
                 <div class="form-group">
                     <div class="col-sm-offset-5 col-sm-10">
@@ -200,7 +274,8 @@ if (!empty($_GET['id'])) {
         var formId = 'form_user';
         $('#' + formId).bootstrapValidator().on('success.form.bv', function (e) {
             e.preventDefault();
-            submitPostForm(formId, '../eventDb/user.php?event=create');
+            submitMutipartPostForm(e.target, '../eventDb/user.php?event=create');
         });
+
     });
 </script>

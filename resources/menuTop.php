@@ -1,5 +1,5 @@
 <div class="bs-component">
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
@@ -20,9 +20,11 @@
                             <i class="glyphicon glyphicon-user"></i> จัดการผู้ใช้งาน <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="index.php?page=list-user&user_status=<?= EMPLOYEE ?>"><i class="glyphicon glyphicon-user"></i> พนักงานร้าน</a></li>
-                            <li><a href="index.php?page=list-user&user_status=<?= ONWER ?>"><i class="glyphicon glyphicon-user"></i> เจ้าของร้าน</a></li>
-                            <li><a href="index.php?page=list-user&user_status="><i class="glyphicon glyphicon-user"></i> อืื่นๆ</a></li>
+                            <li><a href="index.php?page=list-nation"><i class="glyphicon glyphicon-thumbs-up"></i> สัญชาติ</a></li>
+                            <li class="divider"></li>
+                            <li><a href="index.php?page=list-user&user_type=<?= EMPLOYEE ?>"><i class="glyphicon glyphicon-user"></i> พนักงานร้าน</a></li>
+                            <li><a href="index.php?page=list-user&user_type=<?= ONWER ?>"><i class="glyphicon glyphicon-user"></i> เจ้าของร้าน</a></li>
+                            <li><a href="index.php?page=list-user&user_type="><i class="glyphicon glyphicon-user"></i> อืื่นๆ</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -30,8 +32,9 @@
                             <i class="glyphicon glyphicon-tree-conifer"></i> จัดการวัตถุดิบ <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">พนักงานร้าน</a></li>
-                            <li><a href="#">Another action</a></li>
+                            <li><a href="index.php?page=list-material">จัดการวัตถุดิบ</a></li>
+                            <li><a href="index.php?page=list-material_type">จัดการประเภทวัตถุดิบ</a></li>
+                            <li><a href="index.php?page=list-quantity">จัดการหน่วยเรียกของวัตถุดิบ</a></li>                            
                             <li><a href="#">Something else here</a></li>
                             <li class="divider"></li>
                             <li><a href="#">Separated link</a></li>
