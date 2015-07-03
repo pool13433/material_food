@@ -13,7 +13,7 @@ $buydate = '';
 $expdate = '';
 $status = '';
 $updatedate = '';
-$picture = '';
+$picture = PICTURE_DEFAULT;
 $validatePicture = 'required data-bv-notempty-message="กรุณาเลือกภาพ"';
 /*
  * ตรวจสอบ id เพื่อดูว่ากำลังแก้ไขหรือสร้างใหม่ด้วย ฟังชั่น empty() = ว่าง , !empty = ไม่ว่าง
@@ -30,13 +30,14 @@ if (!empty($_GET['id'])) {
     $name = $result->mat_name;
     $volume = $result->mat_volume;
     $materialType = $result->quan_id;
-    $quantity = $result->$quan_id;
-    $price = $result->$mat_price;
-    $buydate = $result->$mat_buydate;
-    $expdate = $result->$mat_expdate;
+    $quantity = $result->quan_id;
+    $price = $result->mat_price;
+    $buydate = $result->mat_buydate;
+    $expdate = $result->mat_expdate;
     $status = $result->mat_status;
     $picture = $result->mat_picture;
     $updatedate = $result->mat_modifieddate;
+    $validatePicture = '';
 }
 ?>
 
@@ -62,7 +63,7 @@ if (!empty($_GET['id'])) {
                     <div class="col-md-8 col-md-offset-0">                        
                         <label for="code" class="col-sm-2 control-label">รูป</label>
                         <div class="col-sm-6">
-                            <img class="img-rounded" style="max-height: <?= MAX_PICTURE_SIZE ?>px;max-width: <?= MAX_PICTURE_SIZE ?>px;" src="<?= PATH_UPLOAD . $picture ?>"/>
+                            <img class="img-rounded" style="max-height: <?= MAX_PICTURE_SIZE ?>px;max-width: <?= MAX_PICTURE_SIZE ?>px;" src="<?= PATH_UPLOAD_MATERIAL . $picture ?>"/>
                         </div>
                         <div class="col-md-4 col-sm-offset-0"> 
                             <input type="file" name="file" <?= $validatePicture ?>/>                      
@@ -81,18 +82,6 @@ if (!empty($_GET['id'])) {
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <label for="volume" class="col-sm-4 control-label">ปริมาณ</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" name="volume" placeholder="ปริมาณ" 
-                                   required data-bv-notempty-message="กรุณากรอก ปริมาณ" 
-                                   value="<?= $volume; ?>"/>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section class="row">
-                <div class="form-group">
-                    <div class="col-md-6">
                         <label for="materialType" class="col-sm-4 control-label">ประเภทวัตถุดิบ </label>
                         <div class="col-sm-6">
                             <?php
@@ -110,6 +99,17 @@ if (!empty($_GET['id'])) {
                                     <?php } ?>
                                 <?php } ?>
                             </select>
+                        </div>
+                    </div>                    
+                </div>
+            </section>
+            <section class="row">
+                <div class="form-group">           
+                    <div class="col-md-6">
+                        <label for="volume" class="col-sm-4 control-label">ปริมาณ</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" name="volume" placeholder="ปริมาณ" 
+                                   data-fv-integer-message="The value is not an integer" value="<?= $volume; ?>"/>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -137,10 +137,11 @@ if (!empty($_GET['id'])) {
             <section class="row">
                 <div class="form-group">
                     <div class='col-md-6'>
-                        <label for="price" class="col-sm-4 control-label">วันที่ซื้อมา</label>
+                        <label for="buydate" class="col-sm-4 control-label">วันที่ซื้อมา</label>
                         <div class="col-sm-4">
                             <div class='input-group date' id='datetimepicker_begin'>
-                                <input type='text' class="form-control" />
+                                <input type='text' class="form-control" name="buydate"
+                                       required data-bv-notempty-message="กรุณาเลือกวันที่ซื้อมา"/>
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-search"></span>
                                 </span>
@@ -148,10 +149,11 @@ if (!empty($_GET['id'])) {
                         </div>
                     </div>
                     <div class='col-md-6'>
-                        <label for="price" class="col-sm-4 control-label">วันหมดอายุ</label>
+                        <label for="expdate" class="col-sm-4 control-label">วันหมดอายุ</label>
                         <div class="col-sm-4">
                             <div class='input-group date' id='datetimepicker_end'>
-                                <input type='text' class="form-control" />
+                                <input type='text' class="form-control" name="expdate"
+                                       required data-bv-notempty-message="กรุณาเลือกวันหมดอายุ"/>
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-search"></span>
                                 </span>
@@ -164,22 +166,27 @@ if (!empty($_GET['id'])) {
                 <div class="form-group">
                     <div class="col-md-6">
                         <label for="price" class="col-sm-4 control-label">ราคา</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" name="price" placeholder="ราคา" 
-                                   required data-bv-notempty-message="กรุณากรอก ราคา" 
-                                   value="<?= $price; ?>"/>
+                        <div class="col-sm-4">
+                            <div class='input-group date' id='datetimepicker_end'>
+                                <input type="number" class="form-control" name="price" placeholder="ราคา" 
+                                       required data-bv-notempty-message="กรุณากรอก ราคา" 
+                                       value="<?= $price; ?>"/>
+                                <span class="input-group-addon">
+                                    <strong>บาท</strong>
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <label for="status" class="col-sm-4 control-label">สถานะ</label>
                         <div class="col-sm-4">
-                            <?php $status = listMaterialStatus(); ?>
+                            <?php $statuss = listMaterialStatus(); ?>
                             <select class="form-control" name="status" required data-bv-notempty-message="กรุณาเลือกสถานะ">                                
-                                <?php foreach ($status as $key => $data) { ?>
+                                <?php foreach ($statuss as $key => $data) { ?>
                                     <?php if ($status == $key) { ?>
-                                        <option value="<?= $key ?>" selected><?= $data ?></option>
+                                        <option value="<?= $key ?>" selected><?= $data['NAME'] ?></option>
                                     <?php } else { ?>
-                                        <option value="<?= $key ?>"><?= $data ?></option>
+                                        <option value="<?= $key ?>"><?= $data['NAME'] ?></option>
                                     <?php } ?>
                                 <?php } ?>
                             </select>
@@ -192,6 +199,7 @@ if (!empty($_GET['id'])) {
 
             <!-- hidden input-->
             <input type="hidden" name="id" value="<?= $id ?>"/>
+            <input type="hidden" name="picture" value="<?= $picture ?>"/>
 
             <div class="row">
                 <div class="form-group">
@@ -213,7 +221,7 @@ if (!empty($_GET['id'])) {
         var formId = 'form_material';
         $('#' + formId).bootstrapValidator().on('success.form.bv', function (e) {
             e.preventDefault();
-            submitPostForm(formId, '../eventDb/material.php?event=create');
+            submitMutipartPostForm(e.target, '../eventDb/material.php?event=create');
         });
     });
 </script>

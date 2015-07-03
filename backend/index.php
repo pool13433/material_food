@@ -20,7 +20,7 @@ session_start();
                     include $page;
                 } else {
                     // หน้าจอโปรแกรมกรณีเรียกหน้า้พจไม่ถูกต้อง 404
-                    include './404.php';
+                    include '../resources/404.php';
                 }
             } else {
                 include '../resources/404.php';

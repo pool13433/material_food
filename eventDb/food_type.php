@@ -18,13 +18,13 @@ switch ($_GET['event']) {
             );
 
             if (empty($id)) {// insert เพิ่มข้อมูลใหม่
-                $sql = ' INSERT INTO `material_type`(';
+                $sql = ' INSERT INTO `food_type`(';
                 $sql .= ' `type_name`, `type_modifieddate` ';
                 $sql .= ' ) VALUES (';
                 $sql .= ' :name,NOW()';
                 $sql .= ' )';
             } else { // update แก้ไขข้อมูลใหม่
-                $sql = ' UPDATE `material_type` SET ';
+                $sql = ' UPDATE `food_type` SET ';
                 $sql .= ' `type_name`=:name,';
                 $sql .= ' `type_modifieddate`=NOW()';
                 $sql .= ' WHERE `type_id` = :id';
@@ -33,7 +33,7 @@ switch ($_GET['event']) {
             $stmt = $pdo->conn->prepare($sql);
             $exe = $stmt->execute($params);
             if ($exe) {
-                echo returnJson(true, 'บ ันทึกสำเร็จ' , 'บันทึกสำเร็จ', './index.php?page=list-material_type');
+                echo returnJson(true, 'บ ันทึกสำเร็จ', 'บันทึกสำเร็จ', './index.php?page=list-food_type');
             } else {
                 echo returnJson(false, 'เกิดข้อผิดพลาด', 'บันทึก ไม่สำเร็จ [ ' . $sql . ' ]', '');
             }
@@ -43,13 +43,13 @@ switch ($_GET['event']) {
         // delete ลบข้อมูล
         try {
             $pdo->conn = $pdo->open();
-            $sql = 'DELETE FROM material_type WHERE type_id =:id';
+            $sql = 'DELETE FROM food_type WHERE type_id =:id';
             $stmt = $pdo->conn->prepare($sql);
             $exe = $stmt->execute(array(
                 ':id' => $_POST['id'],
             ));
             if ($exe) {
-                echo returnJson(true, 'ลบข้อมูล', 'ลบสำเร็จ', './index.php?page=list-material_type');
+                echo returnJson(true, 'ลบข้อมูล', 'ลบสำเร็จ', './index.php?page=list-food_type');
             } else {
                 echo returnJson(false, 'เกิดข้อผิดพลาด', 'ลบ ไม่สำเร็จ [ ' . $sql . ' ]', '');
             }

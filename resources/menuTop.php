@@ -32,14 +32,26 @@
                             <i class="glyphicon glyphicon-tree-conifer"></i> จัดการวัตถุดิบ <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="index.php?page=list-material">จัดการวัตถุดิบ</a></li>
-                            <li><a href="index.php?page=list-material_type">จัดการประเภทวัตถุดิบ</a></li>
-                            <li><a href="index.php?page=list-quantity">จัดการหน่วยเรียกของวัตถุดิบ</a></li>                            
+                            <li><a href="index.php?page=list-material"><i class="glyphicon glyphicon-th"></i> จัดการวัตถุดิบ</a></li>
+                            <li><a href="index.php?page=list-material_type"><i class="glyphicon glyphicon-th-large"></i> จัดการประเภทวัตถุดิบ</a></li>
+                            <li><a href="index.php?page=list-quantity"><i class="glyphicon glyphicon-th-list"></i> จัดการหน่วยเรียกของวัตถุดิบ</a></li>                            
+                            <li><a href="index.php?page=list-material_recipe"><i class="glyphicon glyphicon-th-list"></i> จัดการรายละเอียดสูตรอาหาร</a></li>                            
                             <li><a href="#">Something else here</a></li>
                             <li class="divider"></li>
                             <li><a href="#">Separated link</a></li>
                             <li class="divider"></li>
                             <li><a href="#">One more separated link</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            <i class="glyphicon glyphicon-tree-conifer"></i> จัดการอาหาร <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="index.php?page=list-food_menu"><i class="glyphicon glyphicon-th"></i> จัดการเมนูอาหาร</a></li>
+                            <li><a href="index.php?page=list-food_type"><i class="glyphicon glyphicon-th-large"></i> จัดการประเภทอาหาร</a></li>                                                     
+                            <li><a href="#">Something else here</a></li>
+                            <li class="divider"></li>
                         </ul>
                     </li>
                 </ul>

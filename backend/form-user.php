@@ -16,7 +16,7 @@ $age = 0;
 $email = '';
 $address = '';
 $updatedate = '';
-$picture = '';
+$picture = PICTURE_DEFAULT;
 $type = (empty($_GET['user_type']) ? '' : $_GET['user_type']);
 $code = $pdo->createUserSerialCode($type);
 if (empty($code)) {
@@ -75,7 +75,7 @@ if (!empty($_GET['id'])) {
                     <div class="col-md-8 col-md-offset-0">                        
                         <label for="code" class="col-sm-2 control-label">รูปส่วนตัว</label>
                         <div class="col-sm-6">
-                            <img class="img-rounded" style="max-height: <?= MAX_PICTURE_SIZE ?>px;max-width: <?= MAX_PICTURE_SIZE ?>px;" src="<?= PATH_UPLOAD . $picture ?>"/>
+                            <img class="img-rounded" style="max-height: <?= MAX_PICTURE_SIZE ?>px;max-width: <?= MAX_PICTURE_SIZE ?>px;" src="<?= PATH_UPLOAD_USER . $picture ?>"/>
                         </div>
                         <div class="col-md-4 col-sm-offset-0"> 
                             <input type="file" name="file" <?= $validatePicture ?>/>                      

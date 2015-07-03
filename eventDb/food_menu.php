@@ -18,22 +18,22 @@ switch ($_GET['event']) {
             );
 
             if (empty($id)) {// insert เพิ่มข้อมูลใหม่
-                $sql = ' INSERT INTO `material_type`(';
-                $sql .= ' `type_name`, `type_modifieddate` ';
+                $sql = ' INSERT INTO `food_menu`(';
+                $sql .= ' `nat_name`, `nat_modifieddate` ';
                 $sql .= ' ) VALUES (';
                 $sql .= ' :name,NOW()';
                 $sql .= ' )';
             } else { // update แก้ไขข้อมูลใหม่
-                $sql = ' UPDATE `material_type` SET ';
-                $sql .= ' `type_name`=:name,';
-                $sql .= ' `type_modifieddate`=NOW()';
-                $sql .= ' WHERE `type_id` = :id';
+                $sql = ' UPDATE `food_menu` SET ';
+                $sql .= ' `nat_name`=:name,';
+                $sql .= ' `nat_modifieddate`=NOW()';
+                $sql .= ' WHERE `nat_id` = :id';
                 $params['id'] = $id;
             }
             $stmt = $pdo->conn->prepare($sql);
             $exe = $stmt->execute($params);
             if ($exe) {
-                echo returnJson(true, 'บ ันทึกสำเร็จ' , 'บันทึกสำเร็จ', './index.php?page=list-material_type');
+                echo returnJson(true, 'บ ันทึกสำเร็จ', 'บันทึกสำเร็จ', './index.php?page=list-food_menu');
             } else {
                 echo returnJson(false, 'เกิดข้อผิดพลาด', 'บันทึก ไม่สำเร็จ [ ' . $sql . ' ]', '');
             }
@@ -43,13 +43,13 @@ switch ($_GET['event']) {
         // delete ลบข้อมูล
         try {
             $pdo->conn = $pdo->open();
-            $sql = 'DELETE FROM material_type WHERE type_id =:id';
+            $sql = 'DELETE FROM food_menu WHERE nat_id =:id';
             $stmt = $pdo->conn->prepare($sql);
             $exe = $stmt->execute(array(
                 ':id' => $_POST['id'],
             ));
             if ($exe) {
-                echo returnJson(true, 'ลบข้อมูล', 'ลบสำเร็จ', './index.php?page=list-material_type');
+                echo returnJson(true, 'ลบข้อมูล', 'ลบสำเร็จ', './index.php?page=list-food_menu');
             } else {
                 echo returnJson(false, 'เกิดข้อผิดพลาด', 'ลบ ไม่สำเร็จ [ ' . $sql . ' ]', '');
             }

@@ -1,14 +1,13 @@
 <?php 
 require_once '../connDb/DbConnection.php'; 
-$user_type = $_GET['user_type'];
 ?>
 <section class="panel">
     <header class="panel-heading clearfix">        
         <h4 class="panel-title pull-left" style="padding-top: 7.5px;">
-            <i class="glyphicon glyphicon-user"></i><b>ข้อมูลรายการผู้ใช้งานทั้งหมด</b>
+            <i class="glyphicon glyphicon-thumbs-up"></i><b>ข้อมูลรายการเมนูอาหารทั้งหมด</b>
         </h4>
         <div class="btn-group pull-right">
-            <a href="index.php?user_type=<?=$user_type?>&page=form-user" class="btn btn-primary">
+            <a href="index.php?page=form-food_menu" class="btn btn-primary">
                 <i class="glyphicon glyphicon-plus-sign"></i> สร้าง
             </a>
         </div>
@@ -18,11 +17,7 @@ $user_type = $_GET['user_type'];
             <thead>
                 <tr>
                     <th>#</th>
-                     <th style="width: 20%">รูป</th>
-                    <th>ชื่อ-สกล</th>
-                    <th>โทรศัพท์</th>
-                    <th>อีเมลล์</th>
-                    <th>สถานะ</th>
+                    <th>ชื่อ</th>
                     <th>แก้ไข</th>
                     <th>ลบ</th>
                 </tr>
@@ -31,25 +26,21 @@ $user_type = $_GET['user_type'];
                 <?php
                 $pdo = new DbConnection();
                 $pdo->conn = $pdo->open();
-                $stmt = $pdo->conn->prepare('SELECT * FROM user WHERE type =:type');
-                $stmt->execute(array(':type' => $user_type));
+                $stmt = $pdo->conn->prepare('SELECT * FROM food_menu');
+                $stmt->execute();
                 $datas = $stmt->fetchAll(PDO::FETCH_OBJ);
                 ?>
                 <?php foreach ($datas as $key => $value) { ?>
                     <tr>
                         <td><?= ($key + 1) ?></td>
-                        <td><img src="<?= PATH_UPLOAD_USER.(empty($value->picture) ? PICTURE_DEFAULT:$value->picture)?>" style="max-height: <?= MAX_PICTURE_SIZE_MINI ?>px;max-width: <?= MAX_PICTURE_SIZE_MINI ?>px;"/></td>
-                        <td><?= $value->fname. '   ' . $value->lname ?></td>
-                        <td><?= $value->tel?></td>
-                        <td><?= $value->email ?></td>
-                        <td><?= getDataList($value->type , listUserStatus())?></td>
+                        <td><?= $value->nat_name?></td>
                         <td style="width: 8%;">
-                            <a href="index.php?user_type=<?=$user_type?>&page=form-user&id=<?= $value->user_id ?>" class="btn btn-success">
+                            <a href="index.php?page=form-food_menu&id=<?= $value->nat_id ?>" class="btn btn-success">
                                 <i class="glyphicon glyphicon-pencil"></i>แก้ไข
                             </a>
                         </td>
                         <td style="width: 8%;">
-                            <button type="button" class="btn btn-danger" onclick="delete_data(<?= $value->user_id ?>, '../eventDb/user.php?event=delete')">
+                            <button type="button" class="btn btn-danger" onclick="delete_data(<?= $value->nat_id ?>, '../eventDb/food_menu.php?event=delete')">
                                 <i class="glyphicon glyphicon-trash"></i>ลบ
                             </button>
                         </td>

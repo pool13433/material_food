@@ -18,8 +18,8 @@
 <script type="text/javascript" src="../assets/datatables/dataTables.bootstrap.js"></script>
 
 <!--Dropzone-->
-<link rel="stylesheet" type="text/css" href="../assets/dropzone/dropzone.css"/>
-<script type="text/javascript" src="../assets/dropzone/dropzone.js"></script>
+<!--<link rel="stylesheet" type="text/css" href="../assets/dropzone/dropzone.css"/>
+<script type="text/javascript" src="../assets/dropzone/dropzone.js"></script>-->
 
 <!--bootstrap-filestyle.js-->
 <script type="text/javascript" src="../assets/bootstrap-filestyle/src/bootstrap-filestyle.js"></script>
